@@ -1,0 +1,84 @@
+---
+title: "W3_R"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+install all the packages you need
+```{r}
+rm(list = ls())
+
+ipak <- function(pkg){
+  new.pkg <- pkg[!(pkg %in% installed.packages()[, "Package"])]
+  if (length(new.pkg))
+    install.packages(new.pkg, dependencies = TRUE)
+  sapply(pkg, require, character.only = TRUE)
+}
+
+packages <- c('tidyverse', 'fpp2', 'readr', 'dplyr', 'xts', 'ggplot2','astsa', 'Hmisc')
+
+ipak(packages)
+```
+
+load the R package
+
+```{r}
+
+library(tidyverse)
+library(fpp2)
+library(readr)
+library(dplyr)
+library(astsa)
+library(xts)
+library(ggplot2)
+library(Hmisc)
+
+setwd("~/Dropbox/Working_Directory/Tex_MD/Teaching/tutorial/6003/W3/")
+```
+
+load data
+
+```{r}
+data <- read_csv("cpi.csv")
+data <- na.omit(data)
+```
+
+line plot of cpi
+
+```{r}
+plot(data$cpi, type="l")
+```
+
+transform cpi into a ts
+
+```{r}
+cpi_ts = ts(data$cpi, start = 1983,end = 2018, frequency = 12)
+
+cpi_ts
+```
+acf plot of cpi
+
+```{r}
+acf(data$cpi, lag.max = 40)
+```
+
+generate inflation
+
+```{r}
+data$infl = (data$cpi - Lag(data$cpi, 12)) / Lag(data$cpi, 12)
+
+data$infl
+```
+
+line plot of inflation
+
+```{r}
+plot(data$infl, type="l")
+```
+
+acf of inflation
+
+```{r}
+acf(na.omit(data$infl), lag.max = 40, ci=0.95)
+```
